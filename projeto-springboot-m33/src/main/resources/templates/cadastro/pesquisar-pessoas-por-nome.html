@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- Declarações para o uso do thymeleaf e do thymeleaf com spring security -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" 
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+>
+
+<head>
+	<meta charset="ISO-8859-1" >
+	<title>Pesquisar Pessoas Por Nome</title>
+	
+	<!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  
+    
+    <!--
+	Import materialize.css
+    <link type="text/css" rel="stylesheet" href="static/materialize/css/materialize.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="static/materialize/css/materialize.min.css"  media="screen,projection"/>
+	-->		
+	<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+
+	<style type="text/css" >
+	
+		body{
+			
+			margin-right: 5%;
+			margin-left: 5%;
+			
+		}
+		
+		table.striped>tbody>tr:nth-child(odd) {
+    		background-color: rgba(158,154,154,0.5);
+		}
+	
+	</style>	
+	
+</head>
+
+<body>
+	
+	
+	<h4>Pesquisar Pessoas Por Nome</h4>
+	
+	<a href="/cadastropessoa">Voltar - Cadastrar Pessoa</a>
+	
+	<br><br>
+	
+	<fieldset>
+		<legend>Campos de Pesquisa</legend>
+		<br>
+		<!-- Formulário para pesquisar pessoas pelo nome -->
+		<form action="/pesquisarpessoa" method="POST" class="col s12">
+			<div class="row">
+				<div class="row">
+					<div class="input-fiel col s1"></div>
+					<div class="input-fiel col s5">
+						<label>Pesquisar Pessoas Por Nome:</label>
+						<input type="text" name="nomepesquisa" id="nomepesquisa" th:value="${nomepesquisa}">
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-fiel col s1"></div>
+					<div class="input-fiel col s11">
+						<button class="waves-effect waves-light btn" type="submit" >Pesquisar</button>
+					</div>
+				</div>
+			</div>	
+		</form>
+	
+		<br>
+	
+		<!-- Tabela para exibir pessoas pelo nome INformado na pesquisa -->
+		<table class="striped">
+			
+		  <h5 style="text-align: center;" >Lista de Pessoas Encontradas</h5>	
+		  <br>
+			
+		  <thead>
+		    <tr>
+		      <th scope="col">ID</th>
+		      <th scope="col">Nome</th>
+		      <th scope="col">Sobrenome</th>
+		      <th scope="col">Idade</th>
+		      <th scope="col">Editar</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr th:each = "pessoa : ${pessoasEncontradasPorNomeInformado.content}" >
+		      <td th:text = "${pessoa.id}"></th>
+		      <td th:text = "${pessoa.nome}"></td>
+		      <td th:text = "${pessoa.sobrenome}"></td>
+		      <td th:text = "${pessoa.idade}"></td>
+		      <td> <a th:href="@{/editarpessoa/{idpessoa}(idpessoa=${pessoa.id})}" >Editar</a> </td>
+		      <td> <a th:href="@{/excluirpessoa/{idpessoa}(idpessoa=${pessoa.id})}" >Excluir</a> </td>
+	
+		    </tr>
+		  </tbody>
+		</table>
+		<br>
+		
+		<!-- Paginação -->
+		<div>
+			<center>
+				
+				<span th:if="${pessoasEncontradasPorNomeInformado.hasPrevious()}">
+					<a th:href="@{/pesquisarpessoaspag(page=${pessoasEncontradasPorNomeInformado.number - 1 }, size = ${pessoasEncontradasPorNomeInformado.size}, nomepesquisa=${nomepesquisa}  )}" >Anterior</a>
+				</span>
+				<th:block th:each=" i : ${#numbers.sequence(0, pessoasEncontradasPorNomeInformado.totalPages - 1)}">
+				
+					<a th:href="@{/pesquisarpessoaspag(page=${i}, size=${pessoasEncontradasPorNomeInformado.size}, nomepesquisa=${nomepesquisa} )}" > [[ ${i} + 1 ]] </a>
+					
+				</th:block>
+				<span th:if="${pessoasEncontradasPorNomeInformado.hasNext()}">
+					<a th:href="@{/pesquisarpessoaspag(page=${pessoasEncontradasPorNomeInformado.number + 1 }, size = ${pessoasEncontradasPorNomeInformado.size}, nomepesquisa=${nomepesquisa}  )}" >Próximo</a>
+				</span>
+				
+			</center>
+		</div>
+	</fieldset>	
+	<br>
+	
+	
+	<!--
+	JavaScript at end of body for optimized loading
+    <script type="text/javascript" src="static/materialize/js/materialize.min.js"></script>
+	<script type="text/javascript" src="static/materialize/js/materialize.js"></script>
+	-->
+	
+	<!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+     <!-- Adicionando JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
+	<script type="text/javascript">
+		
+		
+	
+	</script>
+
+</body>
+
+
+</html>

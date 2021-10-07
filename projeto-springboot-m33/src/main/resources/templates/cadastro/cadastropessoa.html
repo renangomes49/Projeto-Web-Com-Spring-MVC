@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<!-- Declarações para o uso do thymeleaf e do thymeleaf com spring security -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" 
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+>
+
+<head>
+	<meta charset="ISO-8859-1" >
+	<title>Cadastro de Pessoas</title>
+	
+	<!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  
+    
+    <!--
+	Import materialize.css
+    <link type="text/css" rel="stylesheet" href="static/materialize/css/materialize.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="static/materialize/css/materialize.min.css"  media="screen,projection"/>
+	-->		
+	<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+
+	<style type="text/css" >
+	
+		body{
+			
+			margin-right: 5%;
+			margin-left: 5%;
+			
+		}
+		
+		table.striped>tbody>tr:nth-child(odd) {
+    		background-color: rgba(158,154,154,0.5);
+		}
+	
+	</style>	
+	
+</head>
+
+<body>
+	
+	<!-- Carregar as mensagens de erros do cadastro de pessoa-->
+	<div th:each = " m : ${mensagens}">
+		<span th:text = "${m}" ></span>
+	</div>
+	<br>
+	
+	<fieldset>
+		<legend>Cadastrar Pessoa</legend>
+		<div class="row">
+		
+			<!-- Formulário para salvar pessoa -->
+			<!-- Para fazer upload de arquivo a tag form tem que conter a seguinte propriedade: enctype="multipart/form-data" -->
+			<form action="salvarpessoa" method="POST" th:object="${pessoa}" class="col s12" id="form-cadastro" enctype="multipart/form-data">
+				
+				<div class="row" >
+					<div class="input-fiel col s1">
+						<label for="id" class="active" >ID:</label>
+						<input name="id" id="id"  readonly th:field="*{id}" > <br>
+					</div>
+					<div class="input-fiel col s11">
+						<label for="nome" class="active" >Nome:</label>
+						<input type="text" name="nome" id="nome" th:field="*{nome}"> <br>
+					</div>
+				</div>
+				
+				<label for="sobrenome" >Sobrenome:</label>
+				<input type="text" name="sobrenome" id="sobrenome" th:field="*{sobrenome}"> <br>
+				
+				<div class="row">
+					<div class="input-fiel col s6">
+						<label for="dataNascimento" class="active" >Data de Nascimeto:</label>
+						<input type="date" name="dataNascimento" id="dataNascimento" th:field="*{dataNascimento}"> <br>
+					</div>
+					<div class="input-fiel col s6">
+						<label for="idade" >Idade:</label>
+						<input type="number" name="idade" id="idade" th:field="*{idade}"> <br>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="input-fiel col s12">
+						<label for="arquivo" >Currículo:</label> <br>
+						<input  type="file" name="arquivo" id="arquivo" class="file-field input-field"> <br>
+					</div>
+				</div>
+				
+				<label for="hobby" >Hobby:</label>
+				<select class="browser-default" th:field="*{hobby}" id="hobby">
+					<option th:each = "h : ${T(br.com.springboot.model.Hobby).values()}" th:value="${h}" th:text="${h.nome}" />
+				</select> <br>
+				
+				<label for="profissao" >Profissão:</label>
+				<select class="browser-default" th:field="*{profissao}" id="profissao">
+					<option th:each = "p : ${profissoes}" th:value="${p.id}" th:text="${p.nome}" />
+				</select> <br>
+				
+				<label for="sexo" >Sexo:</label>
+				<select class="browser-default" th:field="*{sexo}">
+					<option value="" disabled selected>--[Selecione]--</option>
+					<option value="MASCULINO" th:text="Masculino"/>
+					<option value="FEMININO" th:text="Feminino"/>
+				</select> <br>
+							
+				<label for="cep" >Cep:</label>
+				<input type="text" name="cep" id="cep" th:field="*{cep}"> <br>
+				
+				<label for="rua" >Rua:</label>
+				<input type="text" name="rua" id="rua" th:field="*{rua}"> <br>
+				
+				<label for="bairro" >Bairro:</label>
+				<input type="text" name="bairro" id="bairro" th:field="*{bairro}"> <br>
+				
+				<label for="cidade" >Cidade:</label>
+				<input type="text" name="cidade" id="cidade" th:field="*{cidade}"> <br>
+				
+				<label for="uf" >Estado:</label>
+				<input type="text" name="uf" id="uf" th:field="*{uf}"> <br>
+				
+				<button class="waves-effect waves-light btn" type="submit">Salvar</button>
+				<button class="waves-effect waves-light btn" type="reset" onclick="document.getElementById('form-cadastro').reset();" >Novo</button>
+				
+				<!-- Chama a tabela com as pessoas cadastradas -->
+				<a class="waves-effect waves-light btn" href="listarpessoas">Exibir Lista de Pessoas</a>
+				
+			</form> 
+			
+			
+				
+		</div>
+	
+		<br>
+		<br>
+		
+		<!-- Tabela exibir pessoas cadastradas -->
+		<table class="striped">
+			
+		  <h5 style="text-align: center;" >Lista de Pessoas Cadastradas</h5>	
+		  <br>
+			
+		  <thead>
+		    <tr>
+		      <th scope="col">ID</th>
+		      <th scope="col">Nome</th>
+		      <th scope="col">Sobrenome</th>
+		      <th scope="col">Idade</th>
+		      <th scope="col">Cidade</th>
+		      <th scope="col">Estado</th>
+		      <th scope="col">Telefone</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr th:each = "pessoa : ${pessoas.content}" >
+		      <td th:text = "${pessoa.id}"></td>
+		      <td th:text = "${pessoa.nome}"></td>
+		      <td th:text = "${pessoa.sobrenome}"></td>
+		      <td th:text = "${pessoa.idade}"></td>   
+		      <td th:text = "${pessoa.cidade}"></td>
+		       <td th:text = "${pessoa.uf}"></td>     
+		      <!-- Colocando um link no nome do usuário para poder adicionar telefones a ele -->
+		      <!-- Vai redirecionar para outra tela -->
+		      <td><a th:href="@{/adicionartelefones/{idpessoa}(idpessoa=${pessoa.id})}">Ver Telefones</a><td>
+		      <td> 
+		      		<a th:if="${pessoa.curriculo != null}" th:href="@{/downloadcurriculo/{idpessoa}(idpessoa=${pessoa.id})}" >Download Currículo</a> 
+		 			<a th:if="${pessoa.curriculo == null}">Sem Currículo</a> 
+		      </td>
+		      <td sec:authorize="hasRole('ROLE_ADMIN')" > <a th:href="@{/editarpessoa/{idpessoa}(idpessoa=${pessoa.id})}" >Editar</a> </td>
+		      <td sec:authorize="hasRole('ROLE_ADMIN')" > <a th:href="@{/excluirpessoa/{idpessoa}(idpessoa=${pessoa.id})}" >Excluir</a> </td>
+	
+		    </tr>
+		  </tbody>
+		</table>
+		<br>
+		
+		<!-- Paginação -->
+		<div>
+			<center>
+				
+				<span th:if="${pessoas.hasPrevious()}">
+					<a th:href="@{/pessoaspag(page=${pessoas.number - 1 }, size = ${pessoas.size}  )}" >Anterior</a>
+				</span>
+				<th:block th:each=" i : ${#numbers.sequence(0, pessoas.totalPages - 1)}">
+				
+					<a th:href="@{/pessoaspag(page=${i}, size=${pessoas.size} )}" > [[ ${i} + 1 ]] </a>
+					
+				</th:block>
+				<span th:if="${pessoas.hasNext()}">
+					<a th:href="@{/pessoaspag(page=${pessoas.number + 1 }, size = ${pessoas.size}  )}" >Próximo</a>
+				</span>
+				
+			</center>
+		</div>
+		
+		<br>
+		<a href="download-pdf-pessoas-cadastradas" class="waves-effect waves-light btn" >Download PDF - Pessoas Cadastradas</a>
+		<a href="/pesquisar-pessoas-por-nome" class="waves-effect waves-light btn" >Pesquisar Pessoas Pelo Nome</a>	
+	</fieldset>	
+	
+	<br><br>
+	
+	<br>
+	
+	<!--
+	JavaScript at end of body for optimized loading
+    <script type="text/javascript" src="static/materialize/js/materialize.min.js"></script>
+	<script type="text/javascript" src="static/materialize/js/materialize.js"></script>
+	-->
+	
+	<!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+     <!-- Adicionando JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
+	<script type="text/javascript">
+		
+		// viacep.com - esse código abaixo é disponibilizado no site
+		$(document).ready(function() {
+
+            function limpa_formulário_cep() {
+                // Limpa valores do formulário de cep.
+                $("#rua").val("");
+                $("#bairro").val("");
+                $("#cidade").val("");
+                $("#uf").val("");
+            }
+            
+            //Quando o campo cep perde o foco.
+            $("#cep").blur(function() {
+
+                //Nova variável "cep" somente com dígitos.
+                var cep = $(this).val().replace(/\D/g, '');
+
+                //Verifica se campo cep possui valor informado.
+                if (cep != "") {
+
+                    //Expressão regular para validar o CEP.
+                    var validacep = /^[0-9]{8}$/;
+
+                    //Valida o formato do CEP.
+                    if(validacep.test(cep)) {
+
+                        //Preenche os campos com "..." enquanto consulta webservice.
+                        $("#rua").val("...");
+                        $("#bairro").val("...");
+                        $("#cidade").val("...");
+                        $("#uf").val("...");
+
+                        //Consulta o webservice viacep.com.br/
+                        $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
+
+                            if (!("erro" in dados)) {
+                                //Atualiza os campos com os valores da consulta.
+                                $("#rua").val(dados.logradouro);
+                                $("#bairro").val(dados.bairro);
+                                $("#cidade").val(dados.localidade);
+                                $("#uf").val(dados.uf);
+                            } //end if.
+                            else {
+                                //CEP pesquisado não foi encontrado.
+                                limpa_formulário_cep();
+                                alert("CEP não encontrado.");
+                            }
+                        });
+                    } //end if.
+                    else {
+                        //cep é inválido.
+                        limpa_formulário_cep();
+                        alert("Formato de CEP inválido.");
+                    }
+                } //end if.
+                else {
+                    //cep sem valor, limpa formulário.
+                    limpa_formulário_cep();
+                }
+            });
+        });
+
+	
+	</script>
+
+</body>
+
+
+</html>
